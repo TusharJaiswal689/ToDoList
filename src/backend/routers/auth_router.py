@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from database import db_dependency
+from database.db_config import db_dependency
 
 router=APIRouter(prefix="/auth", tags=["Auth"])
 
