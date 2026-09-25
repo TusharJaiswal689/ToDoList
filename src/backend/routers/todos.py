@@ -1,31 +1,20 @@
 from fastapi import APIRouter, HTTPException, Depends, Path
 from starlette import status
-from sqlalchemy.orm import Session
-from typing import Annotated
-from database import SessionLocal
+from database import db_dependency
 from models import Todos
-from schema import TodoCreate, TodoOut
+from schema import TodoCreate, TodoResponse
 
 
 router= APIRouter(prefix="/todo", tags=["ToDo"])
 
-def get_db():
-    db=SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-db_dependency = Annotated[Session, Depends(get_db)]
-
 #------GET-----
 @router.get("", status_code= status.HTTP_200_OK)
-async def get_todo_list(db: db_dependency) -> list[TodoOut]:
+async def get_todo_list(db: db_dependency) -> list[TodoResponse]:
 
     return db.query(Todos).all()
 
 @router.get("/{todo_id}", status_code=status.HTTP_200_OK)
-async def get_todo_list_by_id(db: db_dependency, todo_id: int = Path(gt=0)) -> TodoOut:
+async def get_todo_list_by_id(db: db_dependency, todo_id: int = Path(gt=0)) -> TodoResponse:
 
     todo_model = db.query(Todos).filter(Todos.id==todo_id).first()
     if todo_model is not None:
