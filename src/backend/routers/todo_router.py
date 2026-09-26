@@ -28,7 +28,7 @@ async def get_user_todos(user: CurrentUser, db: db_dependency) -> list[TodoRespo
 
 
 #-----POST-----
-@router.post("/me/add", status_code= status.HTTP_201_CREATED)
+@router.post("/add", status_code= status.HTTP_201_CREATED)
 async def create_todo(user: CurrentUser, db: db_dependency, todo_request: TodoCreate):
 
     td.create_todo(db, todo_request, owner_id=user.id)

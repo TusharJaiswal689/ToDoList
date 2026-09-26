@@ -12,14 +12,6 @@ class User:
 
     def get_user_by_id(db: Session, id: int):
         return db.query(Users).filter(Users.id==id).first()
-        
-    def get_user_todo_list(db: Session, id):
-        user= db.query(Users).filter(Users.id==id).first()
-        if user is None:
-            return None, None
-        
-        todo_list= db.query(Todos).filter(Todos.owner==id).all()
-        return user, todo_list
 
 
     # POST Operations

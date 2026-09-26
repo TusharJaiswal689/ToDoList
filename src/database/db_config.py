@@ -1,10 +1,13 @@
 from typing import Annotated
+from pathlib import Path
 from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-SQLALCHEMY_DB_URL = "sqlite:///./todoapp.db"
+BASE_DIR= Path(__file__).resolve().parent.parent
+DB_PATH= BASE_DIR/"database/todoapp.db"
+SQLALCHEMY_DB_URL = f"sqlite:///{DB_PATH}"
 
 engine = create_engine(SQLALCHEMY_DB_URL, connect_args={"check_same_thread": False})
 

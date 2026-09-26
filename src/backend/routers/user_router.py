@@ -24,15 +24,6 @@ async def get_user_by_id(db: db_dependency, user_id: int) -> UserResponse:
 async def get_user(user: CurrentUser):
     return user
 
-@router.get("/me/todo", status_code=status.HTTP_200_OK)
-async def get_user_todo_list(user: CurrentUser, db: db_dependency) -> list[TodoResponse]:
-    exists, todo_list=us.get_user_todo_list(db, user.id)
-    if not exists:
-        raise HTTPException(status_code=404, detail="User not found.")
-    if todo_list is None:
-        raise HTTPException(status_code=404, detail="No Item under User.")
-    return todo_list
-
 
 #-----POST-----
 

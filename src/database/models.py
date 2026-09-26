@@ -10,7 +10,7 @@ class Users(Base):
     username= Column(String, nullable=False, unique=True)
     first_name= Column(String, nullable=False)
     last_name= Column(String, nullable=False)
-    hashed_password= Column(String)
+    hashed_password= Column(String, nullable=False)
     is_active= Column(Boolean, default=True)
     role= Column(String)
 
