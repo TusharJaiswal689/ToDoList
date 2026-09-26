@@ -1,28 +1,33 @@
-from fastapi import APIRouter, HTTPException
-from backend.schema import UserCreate, UserResponse, UserUpdate, TodoResponse
+from fastapi import APIRouter, HTTPException, Depends
+from backend.schema import UserCreate, UserResponse, UserUpdate, UserPassUpdate, TodoResponse
 from database.db_config import db_dependency
 from backend.services.user import User as us
+from backend.services.auth import CurrentUser
 from starlette import status
 
 router=APIRouter(prefix="/user", tags=["User"])
 
 #-----GET-----
 
-@router.get("", status_code=status.HTTP_200_OK)
+@router.get("/admin/users", status_code=status.HTTP_200_OK)
 async def get_all_users(db: db_dependency) -> list[UserResponse]:
     return us.get_user_list(db)
 
-@router.get("/{user_id}", status_code=status.HTTP_200_OK)
+@router.get("/admin/{user_id}", status_code=status.HTTP_200_OK)
 async def get_user_by_id(db: db_dependency, user_id: int) -> UserResponse:
     user_model=us.get_user_by_id(db, user_id)
     if user_model is None:
         raise HTTPException(status_code=404, detail="User not found.")
     return user_model
 
-@router.get("/{user_id}/todo", status_code=status.HTTP_200_OK)
-async def get_user_todo_list(db: db_dependency, user_id: int) -> list[TodoResponse]:
-    user, todo_list=us.get_user_todo_list(db, user_id)
-    if not user:
+@router.get("/me", status_code=status.HTTP_200_OK, response_model=UserResponse)
+async def get_user(user: CurrentUser):
+    return user
+
+@router.get("/me/todo", status_code=status.HTTP_200_OK)
+async def get_user_todo_list(user: CurrentUser, db: db_dependency) -> list[TodoResponse]:
+    exists, todo_list=us.get_user_todo_list(db, user.id)
+    if not exists:
         raise HTTPException(status_code=404, detail="User not found.")
     if todo_list is None:
         raise HTTPException(status_code=404, detail="No Item under User.")
@@ -33,23 +38,33 @@ async def get_user_todo_list(db: db_dependency, user_id: int) -> list[TodoRespon
 
 @router.post("/add", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency, user_request: UserCreate):
-    us.add_user(db, user_request)
+    added, error=us.add_user(db, user_request)
+    if not added:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=error,
+            )
 
 
 #-----PUT-----
 
-@router.put("/update/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_user(db: db_dependency, user_id: int, user_request: UserUpdate):
-    updated = us.update_user(db, user_id, user_request)
+@router.put("/me", status_code=status.HTTP_204_NO_CONTENT)
+async def update_user(user: CurrentUser, db: db_dependency, user_request: UserUpdate):
+    updated = us.update_user(db, user_request, user.id)
     if not updated:
         raise HTTPException(status_code=404, detail="User not found.")
 
+@router.put("/me/password", status_code=status.HTTP_204_NO_CONTENT)
+async def update_password(user: CurrentUser, db: db_dependency, plain_password: UserPassUpdate):
+    updated=us.update_user_password(db, plain_password.password, user.id)
+    if not updated:
+        raise HTTPException(status_code=404, detail="User not found.")
 
 #-----DELETE-----
 
-@router.delete("/delete/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(db: db_dependency, user_id: int):
-    deleted = us.delete_user(db, user_id)
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(user: CurrentUser, db: db_dependency):
+    deleted = us.delete_user(db, user.id)
     if not deleted:
         raise HTTPException(status_code=404, detail="User not found.")
 

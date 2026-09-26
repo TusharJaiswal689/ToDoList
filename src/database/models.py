@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, CheckConstraint
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, relationship
 from database.db_config import Base
 
 class Users(Base):
@@ -14,6 +14,12 @@ class Users(Base):
     is_active= Column(Boolean, default=True)
     role= Column(String)
 
+    todos= relationship(
+        "Todos",
+        back_populates="users",
+        cascade="all, delete-orphan",
+    )
+
 class Todos(Base):
     __tablename__= "todos"
 
@@ -26,6 +32,11 @@ class Todos(Base):
 
     __table_args__= (
         CheckConstraint("priority >= 1 AND priority <= 5", name= "check_priority_range"),
+    )
+
+    users= relationship(
+        "Users",
+        back_populates="todos",
     )
 
     # ORM Level validation
