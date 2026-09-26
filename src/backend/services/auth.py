@@ -38,20 +38,16 @@ def create_jwt(user_id: int) -> str:
     }
     return jwt.encode(payload, SECRET_KEY, algorithm= ALGORITHM)
 
-def login_user(db: Session, email: str, password: str) -> tuple[bool, bool, TokenResponse | None]:
+def login_user(db: Session, email: str, password: str) -> TokenResponse | None:
     user=db.query(Users).filter(Users.email==email).first()
 
-    if user is None:
-        return False, False, None
+    if user is None or not user.is_active:
+        return None
 
     if not verify_password(password, user.hashed_password):
-        return True, False, None
+        return None
 
-    if user.is_active==False:
-        return True, True, None
-
-    token= create_jwt(user.id)
-    return True, True, TokenResponse(access_token=token)
+    return TokenResponse(access_token=create_jwt(user.id))
 
 def verify_jwt(token: str) -> dict:
     try:
@@ -71,8 +67,6 @@ def get_current_user(
     except (KeyError, TypeError, ValueError):
         raise HTTPException(status_code=401, detail="Invalid token.")
 
-    if user_id is None:
-        raise HTTPException(status_code=401, detail="Invalid token.")
     user= db.query(Users).filter(Users.id==user_id).first()
     if user is None or not user.is_active:
         raise HTTPException(status_code=401, detail="User not found.")

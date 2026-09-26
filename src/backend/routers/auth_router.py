@@ -9,16 +9,16 @@ router=APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=TokenResponse)
 def get_user(db: db_dependency, form_data: OAuth2PasswordRequestForm= Depends()):
-    user, verify, token= auth.login_user(
+    token= auth.login_user(
         db,
         email= form_data.username,
         password=form_data.password,
         )
-    
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found.")
-    if not verify:
-        raise HTTPException(status_code=401, detail="Invalid Credentials.")
-    if not token:
-        raise HTTPException(status_code=403, detail="Account disabled.")
+
+    if token is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password.",
+            header= {"WWW-Authenticate": "Bearer"}
+            )
     return token
