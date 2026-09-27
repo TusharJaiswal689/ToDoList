@@ -17,7 +17,19 @@ class UserResponse(BaseModel):
     username: str
     first_name: str
     last_name: str
+    # hashed_password: str | None = None
+
+class UserResponseAdmin(BaseModel):
+    model_config= ConfigDict(from_attributes=True)
+
+    id: int
+    email: EmailStr
+    username: str
+    first_name: str
+    last_name: str
     hashed_password: str | None = None
+    is_active: bool
+    role: str
 
 class UserUpdate(BaseModel):
 
@@ -41,6 +53,16 @@ class TodoCreate(BaseModel):
 class TodoResponse(BaseModel):
     model_config= ConfigDict(from_attributes=True)
     
+    id: int
+    title: str
+    description: str | None = None
+    priority: int
+    completed: bool
+    # owner: int
+
+class TodoResponseAdmin(BaseModel):
+    model_config= ConfigDict(from_attributes=True)
+
     id: int
     title: str
     description: str | None = None

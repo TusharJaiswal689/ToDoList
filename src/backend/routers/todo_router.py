@@ -4,23 +4,26 @@ from database.db_config import db_dependency
 from backend.services.todo import ToDo as td
 from backend.services.auth import CurrentUser
 from database.models import Todos
-from backend.schema import TodoCreate, TodoResponse, TodoUpdate
+from backend.schema import TodoCreate, TodoResponse, TodoResponseAdmin, TodoUpdate
 
 
 router= APIRouter(prefix="/todo", tags=["ToDo"])
 
 #------GET-----
 @router.get("/admin", status_code= status.HTTP_200_OK)
-def get_todo_list(db: db_dependency) -> list[TodoResponse]:
-    return td.todo_list_all(db)
+def get_todo_list(user: CurrentUser, db: db_dependency) -> list[TodoResponseAdmin]:
+    if user.role=="admin":
+        return td.todo_list_all(db)
+    raise HTTPException(status_code=403, detail="Unauthorized Request.")
 
 @router.get("/admin/{todo_id}", status_code=status.HTTP_200_OK)
-def get_todo_by_id(db: db_dependency, todo_id: int = Path(gt=0)) -> TodoResponse:
-
-    todo_model = td.todo_by_id(db, todo_id)
-    if todo_model is not None:
-        return todo_model
-    raise HTTPException(status_code=404, detail=f"Item with ToDo id {todo_id} is not found.")
+def get_todo_by_id(user: CurrentUser, db: db_dependency, todo_id: int = Path(gt=0)) -> TodoResponseAdmin:
+    if user.role=="admin":
+        todo_model = td.todo_by_id(db, todo_id)
+        if todo_model is not None:
+            return todo_model
+        raise HTTPException(status_code=404, detail=f"Item with ToDo id {todo_id} is not found.")
+    raise HTTPException(status_code=403, detail="Unauthorized Request.")
 
 @router.get("/me", status_code=status.HTTP_200_OK)
 def get_user_todos(user: CurrentUser, db: db_dependency) -> list[TodoResponse]:

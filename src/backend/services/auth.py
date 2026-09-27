@@ -30,9 +30,10 @@ def verify_password(plain: str, hashed: str) -> bool:
     except ValueError:
         return False
 
-def create_jwt(user_id: int) -> str:
+def create_jwt(user_id: int, role: str) -> str:
     payload ={
         "sub": str(user_id),
+        "role": role,
         "exp": datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRY),
         "iat": datetime.now(timezone.utc)
     }
@@ -47,7 +48,7 @@ def login_user(db: Session, email: str, password: str) -> TokenResponse | None:
     if not verify_password(password, user.hashed_password):
         return None
 
-    return TokenResponse(access_token=create_jwt(user.id))
+    return TokenResponse(access_token=create_jwt(user.id, user.role))
 
 def verify_jwt(token: str) -> dict:
     try:

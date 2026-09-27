@@ -19,6 +19,6 @@ def get_user(db: db_dependency, form_data: OAuth2PasswordRequestForm= Depends())
         raise HTTPException(
             status_code=401,
             detail="Invalid email or password.",
-            header= {"WWW-Authenticate": "Bearer"}
+            headers= {"WWW-Authenticate": "Bearer"}
             )
     return token

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from backend.schema import UserCreate, UserResponse, UserUpdate, UserPassUpdate, TodoResponse
+from backend.schema import UserCreate, UserResponse, UserUpdate, UserPassUpdate, UserResponseAdmin
 from database.db_config import db_dependency
 from backend.services.user import User as us
 from backend.services.auth import CurrentUser
@@ -10,15 +10,19 @@ router=APIRouter(prefix="/user", tags=["User"])
 #-----GET-----
 
 @router.get("/admin/users", status_code=status.HTTP_200_OK)
-def get_all_users(db: db_dependency) -> list[UserResponse]:
-    return us.get_user_list(db)
+def get_all_users(user: CurrentUser, db: db_dependency) -> list[UserResponseAdmin]:
+    if user.role=="admin":
+        return us.get_user_list(db)
+    raise HTTPException(status_code=403, detail="Unauthorized Request.")
 
 @router.get("/admin/{user_id}", status_code=status.HTTP_200_OK)
-def get_user_by_id(db: db_dependency, user_id: int) -> UserResponse:
-    user_model=us.get_user_by_id(db, user_id)
-    if user_model is None:
-        raise HTTPException(status_code=404, detail="User not found.")
-    return user_model
+def get_user_by_id(user: CurrentUser, db: db_dependency, user_id: int) -> UserResponseAdmin:
+    if user.role=="admin":
+        user_model=us.get_user_by_id(db, user_id)
+        if user_model is None:
+            raise HTTPException(status_code=404, detail="User not found.")
+        return user_model
+    raise HTTPException(status_code=403, detail="Unauthorized Request.")
 
 @router.get("/me", status_code=status.HTTP_200_OK, response_model=UserResponse)
 def get_user(user: CurrentUser):
