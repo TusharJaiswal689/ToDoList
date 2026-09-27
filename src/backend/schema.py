@@ -18,6 +18,7 @@ class UserResponse(BaseModel):
     first_name: str
     last_name: str
     # hashed_password: str | None = None
+    # phone_number: str | None
 
 class UserResponseAdmin(BaseModel):
     model_config= ConfigDict(from_attributes=True)
@@ -30,6 +31,7 @@ class UserResponseAdmin(BaseModel):
     hashed_password: str | None = None
     is_active: bool
     role: str
+    # phone_number: str | None
 
 class UserUpdate(BaseModel):
 

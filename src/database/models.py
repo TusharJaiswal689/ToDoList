@@ -13,6 +13,7 @@ class Users(Base):
     hashed_password= Column(String, nullable=False)
     is_active= Column(Boolean, default=True)
     role= Column(String, server_default="user")
+    # phone_number= Column(String, nullable=True)
 
     todos= relationship(
         "Todos",
