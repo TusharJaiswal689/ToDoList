@@ -1,17 +1,11 @@
 from sqlalchemy.orm import Session
-from database.models import Users, Todos
+from database.models import Users
 from backend.services import auth
 from sqlalchemy.exc import IntegrityError
 
 class User:
 
     # GET Operations
-
-    def get_user_list(db: Session):
-        return db.query(Users).all()
-
-    def get_user_by_id(db: Session, id: int):
-        return db.query(Users).filter(Users.id==id).first()
 
 
     # POST Operations

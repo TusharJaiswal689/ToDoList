@@ -5,12 +5,6 @@ class ToDo:
 
     # GET Operations
 
-    def todo_list_all(db:Session):
-        return db.query(Todos).all()
-
-    def todo_by_id(db: Session, todo_id:int):
-        return db.query(Todos).filter(Todos.id==todo_id).first()
-
     def user_todo_list(db: Session, owner_id: int):
         return db.query(Todos).filter(Todos.owner==owner_id).all()
 
