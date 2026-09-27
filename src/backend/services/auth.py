@@ -10,13 +10,13 @@ from database.db_config import db_dependency
 from sqlalchemy.orm import Session
 from database.models import Users
 from backend.schema import TokenResponse
+from config import SECRET_KEY
 
 load_dotenv()
 
 
 ACCESS_TOKEN_EXPIRY = 60
 ALGORITHM = "HS256"
-SECRET_KEY= os.environ["SECRET_KEY"]
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
