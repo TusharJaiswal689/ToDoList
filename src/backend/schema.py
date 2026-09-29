@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr, Field, ConfigDict
 # -----USERS-----
 class UserCreate(BaseModel):
 
-    email: EmailStr= Field(..., unique=True)
+    email: EmailStr= Field(..., json_schema_extra={"unique": True})
     username: str= Field(..., min_length=3)
     first_name: str= Field(..., min_length=3)
     last_name: str= Field(..., min_length=3)
@@ -35,7 +35,6 @@ class UserResponseAdmin(BaseModel):
 
 class UserUpdate(BaseModel):
 
-    email: EmailStr | None = Field(None)
     username: str | None= Field(None, min_length=3)
     first_name: str | None= Field(None, min_length=3)
     last_name: str | None= Field(None, min_length=3)

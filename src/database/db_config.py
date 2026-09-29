@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 from config import db_url
 
 BASE_DIR= Path(__file__).resolve().parent.parent
@@ -14,7 +14,8 @@ engine = create_engine(SQLALCHEMY_DB_URL)
 
 SessionLocal = sessionmaker(autocommit= False, autoflush= False, bind=engine)
 
-Base = declarative_base()
+class Base(DeclarativeBase):
+    pass
 
 def get_db():
     db=SessionLocal()
