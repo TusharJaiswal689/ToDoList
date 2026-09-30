@@ -17,6 +17,10 @@ templates= Jinja2Templates(directory=str(Path(__file__).resolve().parent.parent.
 def render_login_page(request: Request):
     return templates.TemplateResponse(request=request, name="login.html", context= {"request":request})
 
+@router.get("/register-page")
+def render_register_page(request: Request):
+    return templates.TemplateResponse(request=request, name="register.html", context= {"request":request})
+
 ### Endpoints ###
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=TokenResponse)
