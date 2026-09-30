@@ -1,6 +1,5 @@
 import bcrypt
 import jwt
-import os
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException, Depends
@@ -19,6 +18,8 @@ ACCESS_TOKEN_EXPIRY = 60
 ALGORITHM = "HS256"
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
+
 
 def hash_password(password: str) -> str:
     salt = bcrypt.gensalt(rounds=12)

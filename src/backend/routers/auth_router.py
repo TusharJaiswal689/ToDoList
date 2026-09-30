@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from pathlib import Path
+from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi.templating import Jinja2Templates
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 from database.db_config import db_dependency
@@ -6,6 +8,16 @@ from backend.services import auth
 from backend.schema import TokenResponse
 
 router=APIRouter(prefix="/auth", tags=["Auth"])
+
+templates= Jinja2Templates(directory=str(Path(__file__).resolve().parent.parent.parent / "frontend" / "templates"))
+
+### Pages ###
+
+@router.get("/login-page")
+def render_login_page(request: Request):
+    return templates.TemplateResponse(request=request, name="login.html", context= {"request":request})
+
+### Endpoints ###
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=TokenResponse)
 def get_user(db: db_dependency, form_data: OAuth2PasswordRequestForm= Depends()):
