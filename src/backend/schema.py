@@ -10,6 +10,7 @@ class UserCreate(BaseModel):
     password: str= Field(..., min_length=12)
     role: str= Field(default=None, min_length=3)
     phone_number: str= Field(default=None, min_length=10)
+    phone_number: str=Field(default=None, min_length=10)
 
 class UserResponse(BaseModel):
     model_config= ConfigDict(from_attributes=True)
