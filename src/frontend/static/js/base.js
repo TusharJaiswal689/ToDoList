@@ -12,11 +12,11 @@
                 title: data.title,
                 description: data.description,
                 priority: parseInt(data.priority),
-                complete: false
+                completed: false
             };
 
             try {
-                const response = await fetch('/todos/todo', {
+                const response = await fetch('/todo/add', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -53,13 +53,13 @@
             title: data.title,
             description: data.description,
             priority: parseInt(data.priority),
-            complete: data.complete === "on"
+            completed: data.completed === "on"
         };
 
         try {
             console.log(`${todoId}`)
 
-            const response = await fetch(`/todos/todo/${todoId}`, {
+            const response = await fetch(`/todo/update/${todoId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -68,7 +68,7 @@
             });
 
             if (response.ok) {
-                window.location.href = '/todos/todo-page'; // Redirect to the todo page
+                window.location.href = '/todo/todo-page'; // Redirect to the todo page
             } else {
                 // Handle error
                 const errorData = await response.json();
@@ -85,13 +85,13 @@
             const todoId = url.substring(url.lastIndexOf('/') + 1);
 
             try {
-                const response = await fetch(`/todos/todo/${todoId}`, {
+                const response = await fetch(`/todo/delete/${todoId}`, {
                     method: 'DELETE'
                 });
 
                 if (response.ok) {
                     // Handle success
-                    window.location.href = '/todos/todo-page'; // Redirect to the todo page
+                    window.location.href = '/todo/todo-page'; // Redirect to the todo page
                 } else {
                     // Handle error
                     const errorData = await response.json();
@@ -130,7 +130,7 @@
                 });
 
                 if (response.ok) {
-                    window.location.href = '/todos/todo-page'; // Change this to your desired redirect page
+                    window.location.href = '/todo/todo-page'; // Change this to your desired redirect page
                 } else {
                     // Handle error
                     const errorData = await response.json();
