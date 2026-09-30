@@ -8,6 +8,8 @@ class UserCreate(BaseModel):
     first_name: str= Field(..., min_length=3)
     last_name: str= Field(..., min_length=3)
     password: str= Field(..., min_length=12)
+    role: str= Field(default=None, min_length=3)
+    phone_number: str= Field(default=None, min_length=10)
     phone_number: str=Field(default=None, min_length=10)
 
 class UserResponse(BaseModel):
@@ -39,7 +41,7 @@ class UserUpdate(BaseModel):
     username: str | None= Field(None, min_length=3)
     first_name: str | None= Field(None, min_length=3)
     last_name: str | None= Field(None, min_length=3)
-    phone_number: str=Field(default=None, min_length=10)
+    phone_number: str= Field(default=None, min_length=10)
 
 class UserPassUpdate(BaseModel):
     password: str = Field(...,min_length=12)
