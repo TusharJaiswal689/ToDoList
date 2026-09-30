@@ -2,8 +2,7 @@ import bcrypt
 import jwt
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
-from fastapi import HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException, Depends, Request
 from typing import Annotated
 from database.db_config import db_dependency
 from sqlalchemy.orm import Session
@@ -16,10 +15,6 @@ load_dotenv()
 
 ACCESS_TOKEN_EXPIRY = 60
 ALGORITHM = "HS256"
-
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="/auth/login")
-
-
 
 def hash_password(password: str) -> str:
     salt = bcrypt.gensalt(rounds=12)
@@ -60,8 +55,12 @@ def verify_jwt(token: str) -> dict:
         raise HTTPException(status_code=401, detail="Invalid token.")
 
 def get_current_user(
-        token: Annotated[str, Depends(oauth2_schema)],
+        request: Request,
         db: db_dependency) -> Users:
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated.")
+
     payload=verify_jwt(token)
     try:
         user_id = int(payload.get("sub"))

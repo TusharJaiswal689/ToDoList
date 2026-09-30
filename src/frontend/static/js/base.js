@@ -19,8 +19,7 @@
                 const response = await fetch('/todos/todo', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getCookie('access_token')}`
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
                 });
@@ -58,19 +57,12 @@
         };
 
         try {
-            const token = getCookie('access_token');
-            console.log(token)
-            if (!token) {
-                throw new Error('Authentication token not found');
-            }
-
             console.log(`${todoId}`)
 
             const response = await fetch(`/todos/todo/${todoId}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)
             });
@@ -93,16 +85,8 @@
             const todoId = url.substring(url.lastIndexOf('/') + 1);
 
             try {
-                const token = getCookie('access_token');
-                if (!token) {
-                    throw new Error('Authentication token not found');
-                }
-
                 const response = await fetch(`/todos/todo/${todoId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    method: 'DELETE'
                 });
 
                 if (response.ok) {
@@ -146,12 +130,6 @@
                 });
 
                 if (response.ok) {
-                    // Handle success (e.g., redirect to dashboard)
-                    const data = await response.json();
-                    // Delete any cookies available
-                    logout();
-                    // Save token to cookie
-                    document.cookie = `access_token=${data.access_token}; path=/`;
                     window.location.href = '/todos/todo-page'; // Change this to your desired redirect page
                 } else {
                     // Handle error
@@ -191,7 +169,7 @@
             };
 
             try {
-                const response = await fetch('/auth', {
+                const response = await fetch('/user/add', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -214,38 +192,3 @@
     }
 
 
-
-
-
-    // Helper function to get a cookie by name
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    };
-
-    function logout() {
-        // Get all cookies
-        const cookies = document.cookie.split(";");
-    
-        // Iterate through all cookies and delete each one
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i];
-            const eqPos = cookie.indexOf("=");
-            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-            // Set the cookie's expiry date to a past date to delete it
-            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-        }
-    
-        // Redirect to the login page
-        window.location.href = '/auth/login-page';
-    };

@@ -8,6 +8,8 @@ class UserCreate(BaseModel):
     first_name: str= Field(..., min_length=3)
     last_name: str= Field(..., min_length=3)
     password: str= Field(..., min_length=12)
+    role: str= Field(default=None, min_length=3)
+    phone_number: str= Field(default=None, min_length=10)
 
 class UserResponse(BaseModel):
     model_config= ConfigDict(from_attributes=True)
@@ -18,7 +20,7 @@ class UserResponse(BaseModel):
     first_name: str
     last_name: str
     # hashed_password: str | None = None
-    # phone_number: str | None
+    phone_number: str | None
 
 class UserResponseAdmin(BaseModel):
     model_config= ConfigDict(from_attributes=True)
@@ -31,13 +33,14 @@ class UserResponseAdmin(BaseModel):
     hashed_password: str | None = None
     is_active: bool
     role: str
-    # phone_number: str | None
+    phone_number: str | None
 
 class UserUpdate(BaseModel):
 
     username: str | None= Field(None, min_length=3)
     first_name: str | None= Field(None, min_length=3)
     last_name: str | None= Field(None, min_length=3)
+    phone_number: str= Field(default=None, min_length=10)
 
 class UserPassUpdate(BaseModel):
     password: str = Field(...,min_length=12)
@@ -59,7 +62,7 @@ class TodoResponse(BaseModel):
     description: str | None = None
     priority: int
     completed: bool
-    # owner: int
+    owner: int
 
 class TodoResponseAdmin(BaseModel):
     model_config= ConfigDict(from_attributes=True)
