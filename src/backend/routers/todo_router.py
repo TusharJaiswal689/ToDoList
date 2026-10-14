@@ -40,6 +40,18 @@ def render_todo_page(
     todos = db.query(Todos).filter(Todos.owner==user.id).all()
     return templates.TemplateResponse(request=request, name="todo.html", context={"request":request, "todos": todos, "user": user},)
 
+@router.get("/add-todo-page")
+def render_add_todo_page(request: Request, user: Users | None = Depends(get_page_user)):
+    try:
+        if user is None:
+            return redirect_to_login()
+        return templates.TemplateResponse(
+            request=request,
+            name="add-todo.html",
+            context={"request":request, "user":user},
+            )
+    except:
+        return redirect_to_login()
 
 ### Endpoints ###
 
