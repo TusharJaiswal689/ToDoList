@@ -8,9 +8,7 @@ class UserCreate(BaseModel):
     first_name: str= Field(..., min_length=3)
     last_name: str= Field(..., min_length=3)
     password: str= Field(..., min_length=12)
-    role: str= Field(default=None, min_length=3)
-    phone_number: str= Field(default=None, min_length=10)
-    phone_number: str=Field(default=None, min_length=10)
+    phone_number: str = Field(..., min_length=10, pattern=r"^[0-9]+$")
 
 class UserResponse(BaseModel):
     model_config= ConfigDict(from_attributes=True)

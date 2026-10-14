@@ -146,15 +146,32 @@
     // Register JS
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
+        const registerError = document.getElementById('registerError');
+        const fieldLabels = {
+            email: 'Email',
+            username: 'Username',
+            first_name: 'First name',
+            last_name: 'Last name',
+            phone_number: 'Phone number',
+            password: 'Password'
+        };
+
+        function showRegistrationError(message) {
+            registerError.textContent = message;
+            registerError.hidden = false;
+        }
+
         registerForm.addEventListener('submit', async function (event) {
             event.preventDefault();
+            registerError.hidden = true;
+            registerError.textContent = '';
 
             const form = event.target;
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
 
             if (data.password !== data.password2) {
-                alert("Passwords do not match");
+                showRegistrationError('Passwords do not match.');
                 return;
             }
 
@@ -163,7 +180,6 @@
                 username: data.username,
                 first_name: data.firstname,
                 last_name: data.lastname,
-                role: data.role,
                 phone_number: data.phone_number,
                 password: data.password
             };
@@ -180,13 +196,20 @@
                 if (response.ok) {
                     window.location.href = '/auth/login-page';
                 } else {
-                    // Handle error
                     const errorData = await response.json();
-                    alert(`Error: ${errorData.message}`);
+                    const detail = errorData.detail;
+                    const message = Array.isArray(detail)
+                        ? detail.map((error) => {
+                            const field = error.loc[error.loc.length - 1];
+                            const label = fieldLabels[field] || 'Form';
+                            return `${label}: ${error.msg}`;
+                        }).join('\n')
+                        : detail || errorData.message || 'Registration failed. Please check your details.';
+                    showRegistrationError(message);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred. Please try again.');
+                showRegistrationError('An error occurred while registering. Please try again.');
             }
         });
     }
