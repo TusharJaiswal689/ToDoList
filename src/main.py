@@ -1,11 +1,11 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from backend.routers import todo_router, user_router, auth_router, admin_router
 import database.models as models
 from database.db_config import engine
-from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
 app = FastAPI()
 
@@ -18,13 +18,11 @@ app.add_middleware(
 
 models.Base.metadata.create_all(bind=engine)
 
-templates=Jinja2Templates(directory=str(Path(__file__).resolve().parent / "frontend" / "templates"))
-
 app.mount("/static", StaticFiles(directory=str(Path(__file__).resolve().parent / "frontend" / "static")), name="static")
 
 @app.get("/")
 def test(request: Request):
-    return templates.TemplateResponse(request=request, name="home.html", context={"requests": request},)
+    return RedirectResponse(url="/todo/todo-page", status_code=status.HTTP_302_FOUND)
 
 @app.get("/healthy")
 def health_check():
