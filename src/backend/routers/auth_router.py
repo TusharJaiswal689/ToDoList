@@ -40,7 +40,7 @@ def get_user(response: Response, db: db_dependency, form_data: OAuth2PasswordReq
         key="access_token",
         value=token.access_token,
         httponly=True,
-        secure=False,
+        secure=True,
         samesite="lax",
         max_age=3600,
         path="/",
@@ -52,7 +52,7 @@ def logout(response: Response):
     response.delete_cookie(
         key="access_token",
         httponly=True,
-        secure=False,
+        secure=True,
         samesite="lax",
         path="/",
     )
