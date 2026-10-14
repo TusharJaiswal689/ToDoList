@@ -46,3 +46,15 @@ def get_user(response: Response, db: db_dependency, form_data: OAuth2PasswordReq
         path="/",
     )
     return {"message": "Login successful"}
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(response: Response):
+    response.delete_cookie(
+        key="access_token",
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        path="/",
+    )
+    response.status_code = status.HTTP_204_NO_CONTENT
+    return response

@@ -192,3 +192,20 @@
     }
 
 
+window.logout = async function logout() {
+    try {
+        const response = await fetch('/auth/logout', {
+            method: 'POST',
+            credentials: 'same-origin'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Logout failed with status ${response.status}`);
+        }
+
+        window.location.href = '/auth/login-page';
+    } catch (error) {
+        console.error('Error logging out:', error);
+        alert('Could not log out. Please try again.');
+    }
+};
